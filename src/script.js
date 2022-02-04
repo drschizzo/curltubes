@@ -91,7 +91,7 @@ function computeCurl(x, y, z){
         fragmentShader: fragmentshader,
     })
     let start = Date.now()
-    for(let i=0;i<500;i++){
+    for(let i=0;i<200;i++){
         let positions = []
         let colors = []
         let color = new THREE.Color(Math.random(), Math.random(), Math.random()).offsetHSL(0.5, 0.8, 0.2)
@@ -111,7 +111,7 @@ function computeCurl(x, y, z){
         let curve=new THREE.CatmullRomCurve3(positions)
         
         
-        let geometry = new THREE.TubeBufferGeometry(curve, 600, 0.001, 10, false);
+        let geometry = new THREE.TubeBufferGeometry(curve, 300, 0.001, 10, false);
 
         for(let a=0;a<geometry.attributes.position.count;a++){
             colors.push(color.r,color.g,color.b)
@@ -172,12 +172,14 @@ function computeCurl(x, y, z){
     // cameraFolder.add(camera.position, 'z', 0, 10)
     // cameraFolder.open()
     let itime=0
+    let lasttime=new Date().getTime()
     function animate() {
         requestAnimationFrame(animate)
       
        //  cube.rotation.x += 0.01
       //  cube.rotation.y += 0.01
-        itime+=.01
+        itime+=(new Date().getTime()-lasttime)/1000
+        lasttime=new Date().getTime()
         let time=itime
       
         shaderMaterial.uniforms.time.value=itime
