@@ -92,11 +92,11 @@ function computeCurl(x, y, z){
         let start=new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5)
         positions.push(start)
         let currentpos=start.clone()
-        for(let j=0;j<500;j++){
+        for(let j=0;j<200;j++){
             let curl=computeCurl(currentpos.x,currentpos.y,currentpos.z)
-            currentpos.x+=curl.x*0.0005//*(i+1)
-            currentpos.y+=curl.y*0.0005//*(i+1)
-            currentpos.z+=curl.z*0.0005//*(i+1)
+            currentpos.x+=curl.x*0.005//*(i+1)
+            currentpos.y+=curl.y*0.005//*(i+1)
+            currentpos.z+=curl.z*0.005//*(i+1)
             positions.push(currentpos.clone())
 
             
@@ -106,7 +106,7 @@ function computeCurl(x, y, z){
         let curve=new THREE.CatmullRomCurve3(positions)
         
         
-        let geometry = new THREE.TubeBufferGeometry(curve, 500, 0.01, 10, false);
+        let geometry = new THREE.TubeBufferGeometry(curve, 100, 0.001, 10, false);
 
 
     // geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
@@ -168,7 +168,7 @@ function computeCurl(x, y, z){
         itime+=.01
         let time=itime
       
-
+        shaderMaterial.uniforms.time.value=itime
         
 
         
