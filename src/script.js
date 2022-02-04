@@ -13,6 +13,8 @@ const scene = new THREE.Scene()
 
 const noise=new SimplexNoise()    
 
+let settings={
+}
 
 function computeCurl(x, y, z){
     var eps = 0.0001;
@@ -52,11 +54,11 @@ function computeCurl(x, y, z){
   }
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100)
-    camera.position.z = 2
+    camera.position.z = 9
 
     const renderer = new THREE.WebGLRenderer(
         {
-            antialias: true
+            
             
         
         }
@@ -81,24 +83,27 @@ function computeCurl(x, y, z){
             },
             time: {
                 value: 0
-            }
+            },
+            
+            
         },
         vertexShader: vertexshader,
         fragmentShader: fragmentshader,
     })
-
-    for(let i=0;i<200;i++){
+    let start = Date.now()
+    for(let i=0;i<500;i++){
         let positions = []
-        let start=new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5)
+        let colors = []
+        let color = new THREE.Color(Math.random(), Math.random(), Math.random()).offsetHSL(0.5, 0.8, 0.2)
+        let start=new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5).multiplyScalar(5)
         positions.push(start)
         let currentpos=start.clone()
-        for(let j=0;j<200;j++){
-            let curl=computeCurl(currentpos.x,currentpos.y,currentpos.z)
-            currentpos.x+=curl.x*0.005//*(i+1)
-            currentpos.y+=curl.y*0.005//*(i+1)
-            currentpos.z+=curl.z*0.005//*(i+1)
+        for(let j=0;j<300;j++){
+            let curl=computeCurl(currentpos.x/5.,currentpos.y/5.,currentpos.z/5.)
+            currentpos.x+=curl.x*0.01//*(i+1)
+            currentpos.y+=curl.y*0.01//*(i+1)
+            currentpos.z+=curl.z*0.01//*(i+1)
             positions.push(currentpos.clone())
-
             
         
 
@@ -106,15 +111,21 @@ function computeCurl(x, y, z){
         let curve=new THREE.CatmullRomCurve3(positions)
         
         
-        let geometry = new THREE.TubeBufferGeometry(curve, 100, 0.001, 10, false);
+        let geometry = new THREE.TubeBufferGeometry(curve, 600, 0.001, 10, false);
 
+        for(let a=0;a<geometry.attributes.position.count;a++){
+            colors.push(color.r,color.g,color.b)
+        }
+
+        
+        geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
 
     // geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
 
 
 
         //create a shader material
-        
+       // shaderMaterial.uniforms.color.value.setHSL(Math.random(), 0.5, 0.5)
 
 
     //  const cube = new THREE.Mesh(geometry, shaderMaterial)
@@ -122,7 +133,8 @@ function computeCurl(x, y, z){
         let mesh=new THREE.Mesh(geometry,shaderMaterial)
         scene.add(mesh)
     }
-
+    let end = Date.now()
+    console.log("duration",end-start)
     // window.addEventListener('click', (e) => {
     //     console.log(cube.geometry.getAttribute('position'))
     //     cube.geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array([
