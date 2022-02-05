@@ -54,11 +54,22 @@ function computeCurl(x, y, z){
   }
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100)
-    camera.position.z = 9
+    camera.position.z = 6
+    camera.position.y = 5
+    camera.position.x = 5
+   // camera.lookAt(0,0,0)
 
     const renderer = new THREE.WebGLRenderer(
         {
             
+            antialias: true,
+            //autoClear: true,
+            //autoClearColor: true,
+            //autoClearDepth: true,
+            //autoClearStencil: true,
+            sortObjects: true,
+            autoUpdateObjects: true,
+            autoUpdateScene: true
             
         
         }
@@ -66,7 +77,7 @@ function computeCurl(x, y, z){
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
 
-
+    renderer.setClearColor(new THREE.Color(0xCCCCFF), 1)
     let orbitControls = new OrbitControls(camera, renderer.domElement);
 
   //  let geometry = new THREE.BufferGeometry()
@@ -75,6 +86,12 @@ function computeCurl(x, y, z){
         wireframe: true,
         
     })
+
+    const materialPhy = new THREE.MeshPhysicalMaterial({  
+        roughness: 0.7,   
+        transmission: 1,  
+        thickness: 1
+      });
 
     const shaderMaterial = new THREE.ShaderMaterial({
         uniforms: {
@@ -89,8 +106,12 @@ function computeCurl(x, y, z){
         },
         vertexShader: vertexshader,
         fragmentShader: fragmentshader,
+        //side: THREE.DoubleSide,
+        transparent: true,
+        clipping: true
+
+
     })
-    let start = Date.now()
     for(let i=0;i<200;i++){
         let positions = []
         let colors = []
@@ -120,30 +141,10 @@ function computeCurl(x, y, z){
         
         geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
 
-    // geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-
-
-
-        //create a shader material
-       // shaderMaterial.uniforms.color.value.setHSL(Math.random(), 0.5, 0.5)
-
-
-    //  const cube = new THREE.Mesh(geometry, shaderMaterial)
-        // let mesh=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial())
         let mesh=new THREE.Mesh(geometry,shaderMaterial)
         scene.add(mesh)
     }
-    let end = Date.now()
-    console.log("duration",end-start)
-    // window.addEventListener('click', (e) => {
-    //     console.log(cube.geometry.getAttribute('position'))
-    //     cube.geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array([
-    //         Math.random() * 2 - 1,
-    //         Math.random() * 2 - 1,
-    //         Math.random() * 2 - 1
-    //     ]), 3))
-    //     cube.geometry.attributes.position.needsUpdate = true
-    // })
+ 
 
     window.addEventListener(
         'resize',
@@ -163,31 +164,19 @@ function computeCurl(x, y, z){
    
 
     // const gui = new dat.GUI()
-    // const cubeFolder = gui.addFolder('Cube')
-    // cubeFolder.add(cube.scale, 'x', -5, 5)
-    // cubeFolder.add(cube.scale, 'y', -5, 5)
-    // cubeFolder.add(cube.scale, 'z', -5, 5)
-    // cubeFolder.open()
-    // const cameraFolder = gui.addFolder('Camera')
-    // cameraFolder.add(camera.position, 'z', 0, 10)
-    // cameraFolder.open()
+    
     let itime=0
     let lasttime=new Date().getTime()
     function animate() {
         requestAnimationFrame(animate)
       
-       //  cube.rotation.x += 0.01
-      //  cube.rotation.y += 0.01
-        itime+=(new Date().getTime()-lasttime)/1000
+        itime+=(new Date().getTime()-lasttime)/500
         lasttime=new Date().getTime()
         let time=itime
       
         shaderMaterial.uniforms.time.value=itime
         
 
-        
-      //  geometry.setAttribute('position', new THREE.Float32BufferAttribute(newpositions, 3))
-      //  geometry.attributes.position.needsUpdate = true
       
         render()
         orbitControls.update()

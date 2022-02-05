@@ -11,7 +11,7 @@ void main(){
     vColor=color;
     vNormal=normal;
     vViewPosition=cameraPosition;
-    vPosition=position+normal*(0.03+((sin(time+vColor.x)*.5+.5)/8.)*(sin(vUv.x*3.14*4.)+.1));
+    vPosition=position+normal*(0.03+((sin(vUv.x*20.+time+vColor.g)*.5+.5)/8.));
     gl_Position = projectionMatrix * modelViewMatrix * vec4( vPosition, 1.0 );
     gl_PointSize=3.0;
 }
